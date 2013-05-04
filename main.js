@@ -3,9 +3,11 @@
     var stageWidth = 800,
         stageHeight = 400,
         waterHeight = stageHeight * 0.6,
-        fps = 30,
+        fps = 16,
         speedFactor = 10,
         score = 0,
+        timeCounter = 0,
+        timeRange = 30,
 
         // update score
         updateScore = function (color) {
@@ -55,7 +57,17 @@
             }).appendTo('.stage');
         },
 
+        updateInterval = null,
+
+        resetGame = function (argument) {
+            clearInterval(updateInterval);
+            $('.stage img').remove();
+            score = 0;
+        },
+
         update = function () {
+
+            // update ducks
             $('.stage img').each(function () {
                 var speed = $(this).attr('speed'),
                     left = $(this).position().left;
@@ -65,39 +77,33 @@
                     $(this).css('left', left + speed / speedFactor);
                 }
             });
-        },
 
-        addDuckInterval = null,
-        countdownInterval = null,
-        updateInterval = null,
-
-        resetGame = function (argument) {
-            clearInterval(addDuckInterval);
-            clearInterval(countdownInterval);
-            clearInterval(updateInterval);
-            $('.stage img').remove();
-            score = 0;
-        }
-
-        startGame = function (time) {
-            var startTime = time;
-            $('.score').html(0);
-            $('.countdown').html(startTime);
-            countdownInterval = setInterval(function () {
-                startTime = startTime - 1;
-                $('.countdown').html(startTime);
-                if (startTime === 0) {
+            // update timer
+            timeCounter = timeCounter + 1;
+            if (timeCounter % fps === 0) {
+                timeRange = timeRange - 1;
+                $('.countdown').html(timeRange);
+                if (timeRange === 0) {
                     resetGame();
                 }
-            }, 1000);
-            addDuckInterval = setInterval(addDuck, 500);
+            }
+
+            // add duck
+            if (timeCounter % (fps / 2) === 0) {
+                addDuck();
+            }
+        },
+
+        startGame = function () {
+            $('.score').html(0);
+            $('.countdown').html(timeRange);
             updateInterval = setInterval(update, 1000 / fps);
         };
 
     // start game
     $('.start').click(function () {
         resetGame();
-        startGame(30);
+        startGame();
     });
 
     $('.reset').click(function () {
