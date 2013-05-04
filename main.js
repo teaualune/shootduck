@@ -104,11 +104,6 @@
         resetGame();
     })
 
-    // water background
-    setInterval(function () {
-        $('div p').toggleClass('w1');
-    }, 1000);
-
     $('.stage').delegate('img', 'mousedown', function (e) {
         $(this).remove();
         updateScore($(this).attr('src'));
