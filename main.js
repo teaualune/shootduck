@@ -9,7 +9,7 @@
 
         // update score
         updateScore = function (color) {
-            if (color === 'p') {
+            if (color === 'duck2.png') {
                 score = score + 10;
             } else {
                 score = score + 1;
@@ -52,10 +52,7 @@
                 flip: rand(1),
                 color: color,
                 speed: (color === 'p') ? 160 : rand(40) + 10
-            }).appendTo('.stage').mousedown(function () {
-                $(this).remove();
-                updateScore(color);
-            });
+            }).appendTo('.stage');
         },
 
         update = function () {
@@ -112,4 +109,8 @@
         $('div p').toggleClass('w1');
     }, 1000);
 
+    $('.stage').delegate('img', 'mousedown', function (e) {
+        $(this).remove();
+        updateScore($(this).attr('src'));
+    });
 })();
