@@ -63,6 +63,7 @@
             clearInterval(updateInterval);
             $('.stage img').remove();
             score = 0;
+            timeRange = 30;
         },
 
         update = function () {
