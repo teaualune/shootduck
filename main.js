@@ -1,7 +1,7 @@
 (function () {
 
-    var stageWidth = 800,
-        stageHeight = 400,
+    var stageWidth = $('.stage').width(),
+        stageHeight = $('.stage').height(),
         waterHeight = stageHeight * 0.6,
         fps = 16,
         speedFactor = 10,
@@ -21,24 +21,19 @@
 
         // new duck creator
         duck = function (config) {
-            var template = '<img src="duck{color}.png"/>',
-                newDuck;
+            var template = '<img src="duck';
             if (config.color === 'y') {
-                template = template.replace('{color}', '1');
-            } else if (config.color === 'p') {
-                template = template.replace('{color}', '2');
-            }
-            newDuck = $(template);
-            newDuck.css('bottom', config.y);
-            if (config.flip) {
-                newDuck.addClass('flip');
-                newDuck.css('left', stageWidth);
-                newDuck.attr('speed', -config.speed);
+                template = template + '1';
             } else {
-                newDuck.css('left', 0);
-                newDuck.attr('speed', config.speed);
+                template = template + '2';
             }
-            return newDuck;
+            template = template + '.png" style="bottom:' + config.y + 'px;';
+            if (config.flip) {
+                template = template + 'left:' + (stageWidth - 80) + 'px;" class="flip" speed="' + (-config.speed) + '" />';
+            } else {
+                template = template + 'left:0px;" speed="' + config.speed + '" />';
+            }
+            return $(template);
         },
 
         // random number generator from 0 to range
@@ -62,8 +57,6 @@
         resetGame = function (argument) {
             clearInterval(updateInterval);
             $('.stage img').remove();
-            score = 0;
-            timeRange = 30;
         },
 
         update = function () {
@@ -86,16 +79,19 @@
                 $('.countdown').html(timeRange);
                 if (timeRange === 0) {
                     resetGame();
+                    return;
                 }
             }
 
             // add duck
-            if (timeCounter % (fps / 2) === 0) {
+            if (timeCounter % (fps / 4) === 0) {
                 addDuck();
             }
         },
 
         startGame = function () {
+            score = 0;
+            timeRange = 30;
             $('.score').html(0);
             $('.countdown').html(timeRange);
             updateInterval = setInterval(update, 1000 / fps);
@@ -112,7 +108,11 @@
     })
 
     $('.stage').delegate('img', 'mousedown', function (e) {
-        $(this).remove();
+        $(this).animate({
+            opacity: 0
+        }, 300, function () {
+            $(this).remove();
+        });
         updateScore($(this).attr('src'));
     });
 })();
